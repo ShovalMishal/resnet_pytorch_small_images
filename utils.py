@@ -61,7 +61,7 @@ def get_network(args):
         net = xception()
     elif args.net == 'resnet18':
         from models.resnet import resnet18
-        net = resnet18()
+        net = resnet18(num_classes=args.num_classes)
     elif args.net == 'resnet34':
         from models.resnet import resnet34
         net = resnet34()
