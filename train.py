@@ -22,7 +22,7 @@ from resnet_pytorch_small_images.utils import get_network, WarmUpLR, \
     most_recent_folder, most_recent_weights, last_epoch, best_acc_weights
 
 DATE_FORMAT = '%A_%d_%B_%Y_%Hh_%Mm_%Ss'
-device = torch.device("cuda" if torch.cuda.is_available() else "")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def train(epoch, train_dataloader, net, args, optimizer, loss_function, writer, warmup_scheduler):
@@ -118,9 +118,9 @@ def create_and_train_model(train_dataloader, val_dataloader, checkpoint, log_dir
     args = SimpleNamespace()
     args.net = "resnet18"
     args.gpu = True
-    args.lr = 0.001
+    args.lr = 0.1 #0.01
     args.resume = resume
-    args.warm = 1
+    args.warm = 1  # 1
     args.num_classes = len(train_dataloader.dataset.classes)
 
     net = get_network(args)
@@ -133,8 +133,8 @@ def create_and_train_model(train_dataloader, val_dataloader, checkpoint, log_dir
         if loss_class_weights else None
     train_loss_function = nn.CrossEntropyLoss(weight=training_weights)
     val_loss_function = nn.CrossEntropyLoss(weight=validation_weights)
-    optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
-    train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.2)  # learning rate decay
+    optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4) # 1e-4
+    train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.2) # 0.1  # learning rate decay
     iter_per_epoch = len(train_dataloader)
     warmup_scheduler = WarmUpLR(optimizer, iter_per_epoch * args.warm)
 
