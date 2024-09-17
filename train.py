@@ -113,10 +113,10 @@ def eval_training(net, val_dataloader, args, loss_function, writer, epoch=0, tb=
     return correct.float() / len(val_dataloader.dataset)
 
 
-def create_and_train_model(train_dataloader, val_dataloader, checkpoint, log_dir, logger, resume=False, max_epoch=100,
+def create_and_train_model(train_dataloader, val_dataloader, checkpoint, log_dir, logger, net_type, resume=False, max_epoch=100,
                            milestones=[30, 60, 90], save_epoch=10, loss_class_weights=False):
     args = SimpleNamespace()
-    args.net = "resnet18"
+    args.net = net_type
     args.gpu = True
     args.lr = 0.1 #0.01
     args.resume = resume
@@ -169,7 +169,7 @@ def create_and_train_model(train_dataloader, val_dataloader, checkpoint, log_dir
     if args.resume:
         best_weights = best_acc_weights(os.path.join(checkpoint, recent_folder))
         if best_weights:
-            weights_path = os.path.join(checkpoint, args.net, recent_folder, best_weights)
+            weights_path = os.path.join(checkpoint, recent_folder, best_weights)
             logger.info('found best acc weights file:{}'.format(weights_path))
             logger.info('load best training file to test acc...')
             net.load_state_dict(torch.load(weights_path))
